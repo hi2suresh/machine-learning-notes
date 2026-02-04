@@ -15,6 +15,7 @@ Testing a model on the same data used for training doesn't provide a reliable me
 ### Traditional Two-Way Split (Not Recommended)
 
 Initially, you might think to split the dataset into just two parts:
+
 - **Training Set**: Used to train the model (~80% of data)
 - **Test Set**: Used for final evaluation (~20% of data)
 
@@ -28,9 +29,18 @@ A better approach divides the dataset into three subsets:
 - **Validation Set** (~15%): Used for initial testing and hyperparameter tuning during training
 - **Test Set** (~15%): Used for final evaluation after model development
 
+While 70/15/15 is a standard starting point and could be a guideline, it's not a hard rule. The actual number of rows matters more than the percentage.
+
+When deciding on your split, keep these two principles in mind:
+
+1. **Statistical significance**: Is the validation/test set large enough?
+2. **Representativeness**: Does your validation/test set "look like" the real world?
+
+> **Note**: If you have millions of rows, even a 1% split is plenty (98/1/1). If your dataset is tiny, you'll likely need to use 'Cross-Validation' techniques instead to avoid wasting valuable training data.
+
 ![Dataset Division](https://developers.google.com/static/machine-learning/crash-course/images/PartitionThreeSets.png)
 
-*Figure: Recommended dataset split - 70% training, 15% validation, 15% test*
+_Figure: Recommended dataset split - 70% training, 15% validation, 15% test_
 
 ## Workflow for Model Development
 
@@ -42,7 +52,7 @@ A better approach divides the dataset into three subsets:
 
 ![Workflow](https://developers.google.com/static/machine-learning/crash-course/images/workflow_with_validation_set.svg)
 
-*Figure: Optimal workflow using training, validation, and test sets*
+_Figure: Optimal workflow using training, validation, and test sets_
 
 **Important Note**: Any transformations applied to the training set must also be applied to the validation and test sets, as well as real-world data.
 
@@ -61,6 +71,7 @@ With repeated use, validation and test sets can become less effective for unbias
 ### Test Set Requirements
 
 A good test set should be:
+
 - **Large enough** for statistically significant results
 - **Representative** of the entire dataset
 - **Representative** of real-world data the model will encounter
@@ -86,4 +97,4 @@ A good test set should be:
 
 ---
 
-*Based on Google Machine Learning Crash Course content. Last updated: February 2, 2026*
+_Based on Google Machine Learning Crash Course content. Last updated: February 2, 2026_
