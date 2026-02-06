@@ -1,139 +1,145 @@
-# Linear Regression — Simple Guide for Everyone
+# Linear Regression — Easy, Non-Technical Explanation
 
-This short README explains Linear Regression and related concepts in plain language, with simple diagrams and minimal math. It's designed for non-technical readers.
+A short, plain-English guide to the main ideas behind Linear Regression. No math background needed—just simple examples and pictures.
 
 ---
 
-**What is Linear Regression?**
+What this explains:
 
-Linear Regression is a simple way to predict a number (the label) from one or more inputs (features). Think of it like drawing a straight line that best fits a set of points on a chart — then using that line to estimate unknown values.
+- What Linear Regression is
+- What feature, label, prediction, weight, and bias mean
+- What loss is and why we care
+- The common loss functions: MSE, MAE, and Huber (with simple intuition)
 
-Simple equation for a single input feature:
+---
 
-$\text{prediction} = w \cdot x + b$
+What is Linear Regression?
 
-- $x$ = feature (input)
-- $w$ = weight (how strongly the input affects the prediction)
-- $b$ = bias (also called intercept; the prediction when $x=0$)
-- $\text{prediction}$ = the model's guessed output (label)
+Linear Regression finds a straight line that best matches a set of points (data). We use that line to predict a number for new inputs.
 
-ASCII diagram (points and fitted line):
+Plain formula (one input):
+
+prediction = weight \* feature + bias
+
+- feature: an input value (example: hours studied)
+- weight: how much the feature changes the prediction (bigger → stronger effect)
+- bias: the baseline prediction when the feature is zero
+- prediction: the number the model outputs (example: expected test score)
+
+Everyday example: If prediction = 2 \* hours + 50, then each extra hour adds about 2 points to the score, and the base score is 50.
+
+Simple diagram (points and a line):
 
 ```
-Value
-  │             •
-  │         •   •   •
-  │       •      •
-  │   •          •
+Score
+  │          •
+  │       •  •   •
+  │     •     •
+  │   •        •
   │ •
-  └──────────────────
-        Feature →
+  └─────────────────
+       Hours studied →
 
-Fitted line: y = w x + b (a straight line through the points)
+Line shows trend: prediction = weight * feature + bias
 ```
 
 ---
 
-**Key Concepts (plain language)**n
-- Feature: An input or attribute you use to make a prediction. Example: "hours studied".
-- Label: The number you want to predict. Example: "test score".
-- Prediction: The model's estimate for the label given a feature value.
-- Weight (`w`): How much the feature changes the prediction. Larger magnitude → bigger effect.
-- Bias (`b`): A baseline prediction when all features are zero (like the line's starting point).
+Key terms (very short):
 
-Example: If `prediction = 2 * hours + 50`, then each hour adds 2 points and the baseline score is 50.
-
----
-
-**Loss — What we try to minimize**
-
-Loss measures how wrong the model's predictions are compared to actual labels. Training a model means adjusting `w` and `b` to make the loss as small as possible.
-
-Intuition: If predictions are close to actual values, loss is small. If predictions are far away, loss is large.
-
-Popular loss functions for Linear Regression:
-
-1) Mean Squared Error (MSE)
-
-- Formula: $\text{MSE} = \frac{1}{n} \sum_{i=1}^{n} (\text{prediction}_i - y_i)^2$
-- Explanation: Take the difference between predicted and actual, square it (so positives/negatives don't cancel and big errors are punished more), then average.
-- When to use: Very common; works well for many problems and is differentiable (good for optimization).
-
-2) Mean Absolute Error (MAE)
-
-- Formula: $\text{MAE} = \frac{1}{n} \sum_{i=1}^{n} |\text{prediction}_i - y_i|$
-- Explanation: Average absolute differences; treats all errors proportionally, less sensitive to outliers than MSE.
-- When to use: If you want a robust measure that’s less affected by large outliers.
-
-3) Huber Loss (a mix of MSE and MAE)
-
-- Explanation: Uses squared error for small mistakes and absolute error for large mistakes. It blends benefits of both MSE and MAE.
-- When to use: When you want sensitivity to small errors but robustness to large outliers.
-
-Short comparison:
-- MSE: smooth, penalizes large errors strongly.
-- MAE: robust, penalizes errors linearly.
-- Huber: compromise between MSE and MAE.
+- Feature = input (what you measure)
+- Label = true value you want to predict
+- Prediction = model's guess
+- Weight = how important the input is (slope)
+- Bias = baseline value (intercept)
 
 ---
 
-**Small numeric example (MSE)**
+What is Loss?
 
-Data (feature → label): [ (1→3), (2→5), (3→7) ]
-Suppose model: prediction = 2*x + 0
-Predictions: [2, 4, 6]
+Loss is a single number that measures how far the model's predictions are from the true answers. During training we change the weight and bias to make the loss smaller—meaning predictions get closer to reality.
+
+Simple metaphor: Loss is like the total distance between guessed points and real points; we try to make that distance as small as possible.
+
+---
+
+Common loss functions (plain intuition):
+
+1. Mean Squared Error (MSE)
+
+- For each example, take prediction − actual, square it (so negatives don't cancel and big mistakes count more), then average.
+- Effect: Large mistakes become much more important.
+
+2. Mean Absolute Error (MAE)
+
+- For each example, take the absolute difference |prediction − actual|, then average.
+- Effect: Treats all mistakes proportionally and is less affected by one huge outlier.
+
+3. Huber Loss
+
+- Uses squared error for small mistakes and absolute error for large mistakes.
+- Effect: Keeps sensitivity for small errors while being resistant to huge outliers.
+
+Quick comparison:
+
+- MSE: punishes big errors strongly.
+- MAE: treats errors evenly.
+- Huber: a compromise between MSE and MAE.
+
+---
+
+Very small numeric example
+
+True values: [3, 5, 7]
+Model guesses: [2, 4, 6]
+
 Errors: [1, 1, 1]
-Squared errors: [1, 1, 1]
-MSE = (1 + 1 + 1) / 3 = 1
+MSE = (1^2 + 1^2 + 1^2)/3 = 1
+MAE = (1 + 1 + 1)/3 = 1
 
-Lower MSE means better fit.
+If one guess is a large mistake (100):
+Errors: [1, 1, 93]
+MSE ≈ 2884 (huge because of squaring)
+MAE ≈ 31.7 (big, but not squared)
 
----
-
-**Why this matters (practical intuition)**
-
-- If `w` is too big, predictions change too much for small feature changes (overreaction).
-- If `w` is too small, predictions hardly change and model is not useful.
-- The learning process adjusts `w` and `b` to reduce loss so predictions match reality.
+This shows why MSE can be dominated by a single very wrong prediction.
 
 ---
 
-**Diagrams (simple visual reminders)**
+Why it matters in plain words
 
-- Straight line model: a single slope and intercept.
+- If weight is too large, predictions swing too much for small input changes.
+- If weight is too small, predictions barely change and are not useful.
+- Training finds the weight and bias that make predictions match reality as closely as possible.
 
-```
-  Prediction
-    │      / (line)
-    │     /
-    │    /  • (points)
-    │   /
-    └───────── Feature
-```
+Simple visual reminders
 
-- Error illustration (vertical distance from point to line):
+Fitted line and points:
 
 ```
-   •
-   │  ← error (actual - predicted)
-  ─┴────────────
+ Prediction
+   │     / (line)
+   │    /
+   │   /   • (data points)
+   └────────── Feature
+```
+
+Error shown as vertical gap:
+
+```
+  •
+  │  ← error (actual − predicted)
+  ─────────────
    fitted line
 ```
 
 ---
 
-**Quick glossary**
-- Feature: input
-- Label: true output
-- Prediction: model output
-- Weight: slope (importance of feature)
-- Bias: intercept (baseline)
-- Loss: a number measuring prediction error
+Short glossary
 
----
-
-If you want, I can:
-- Add simple plots (PNG) showing examples, or
-- Create a notebook demonstrating linear regression on real data.
-
-*File created: `week1/read.me`. Last updated: February 6, 2026.*
+- Feature = input
+- Label = true answer
+- Prediction = model output
+- Weight = importance of input
+- Bias = baseline
+- Loss = how wrong the model is (we try to make it small)
