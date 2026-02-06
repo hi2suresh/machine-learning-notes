@@ -28,20 +28,11 @@ prediction = weight \* feature + bias
 
 Everyday example: If prediction = 2 \* hours + 50, then each extra hour adds about 2 points to the score, and the base score is 50.
 
-Simple diagram (points and a line):
+More examples:
 
-```
-Score
-  │          •
-  │       •  •   •
-  │     •     •
-  │   •        •
-  │ •
-  └─────────────────
-       Hours studied →
-
-Line shows trend: prediction = weight * feature + bias
-```
+- House price prediction: prediction = 100 \* (room count) + 50000. Each room adds 100k, base price is 50k.
+- Plant height: prediction = 5 \* (weeks old) + 2. Each week adds 5cm, initial height is 2cm.
+- Monthly savings: prediction = 300 \* (hours worked per week) + 200. Each hour adds 300 dollars, base savings is 200.
 
 ---
 
@@ -69,16 +60,19 @@ Common loss functions (plain intuition):
 
 - For each example, take prediction − actual, square it (so negatives don't cancel and big mistakes count more), then average.
 - Effect: Large mistakes become much more important.
+- Example: If one error is 10, it becomes 100 when squared. A smaller error of 2 becomes 4.
 
 2. Mean Absolute Error (MAE)
 
 - For each example, take the absolute difference |prediction − actual|, then average.
 - Effect: Treats all mistakes proportionally and is less affected by one huge outlier.
+- Example: Errors of 10, 2, and 8 are treated simply as 10, 2, and 8 (not squared).
 
 3. Huber Loss
 
 - Uses squared error for small mistakes and absolute error for large mistakes.
 - Effect: Keeps sensitivity for small errors while being resistant to huge outliers.
+- Example: Treats small errors like MSE but big errors (like 100) like MAE, so one huge mistake doesn't ruin everything.
 
 Quick comparison:
 
@@ -104,34 +98,31 @@ MAE ≈ 31.7 (big, but not squared)
 
 This shows why MSE can be dominated by a single very wrong prediction.
 
+More examples for understanding MSE vs MAE:
+
+Example 2 (House price):
+True prices: [$300k, $400k, $500k]
+Model guesses: [$290k, $410k, $510k]
+Errors: [$10k, $10k, $10k]
+MSE = (10000^2 + 10000^2 + 10000^2) / 3 ≈ 100 million
+MAE = (10000 + 10000 + 10000) / 3 ≈ 10000
+
+Example 3 (With one outlier):
+True prices: [$300k, $400k, $500k]
+Model guesses: [$290k, $999k, $510k] ← One huge mistake!
+Errors: [$10k, $599k, $10k]
+MSE = (10000^2 + 599000^2 + 10000^2) / 3 ≈ 119 billion (dominated by the big error)
+MAE = (10000 + 599000 + 10000) / 3 ≈ 206333 (still large, but more reasonable)
+
+In Example 3, MSE is much worse at handling that one bad prediction.
+
 ---
 
 Why it matters in plain words
 
-- If weight is too large, predictions swing too much for small input changes.
-- If weight is too small, predictions barely change and are not useful.
+- If weight is too large, predictions swing too much for small input changes. For example, if weight = 1000 \* hours, then 1 extra hour changes the score by 1000 points (unrealistic).
+- If weight is too small, predictions barely change and are not useful. For example, if weight = 0.001 \* hours, then 1 hour changes the score by almost 0 (the model ignores the input).
 - Training finds the weight and bias that make predictions match reality as closely as possible.
-
-Simple visual reminders
-
-Fitted line and points:
-
-```
- Prediction
-   │     / (line)
-   │    /
-   │   /   • (data points)
-   └────────── Feature
-```
-
-Error shown as vertical gap:
-
-```
-  •
-  │  ← error (actual − predicted)
-  ─────────────
-   fitted line
-```
 
 ---
 
