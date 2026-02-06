@@ -26,13 +26,45 @@ prediction = weight \* feature + bias
 - bias: the baseline prediction when the feature is zero
 - prediction: the number the model outputs (example: expected test score)
 
-Everyday example: If prediction = 2 \* hours + 50, then each extra hour adds about 2 points to the score, and the base score is 50.
+**Example 1 — Test Score Prediction:**
 
-More examples:
+```
+prediction = 2 * hours + 50
 
-- House price prediction: prediction = 100 \* (room count) + 50000. Each room adds 100k, base price is 50k.
-- Plant height: prediction = 5 \* (weeks old) + 2. Each week adds 5cm, initial height is 2cm.
-- Monthly savings: prediction = 300 \* (hours worked per week) + 200. Each hour adds 300 dollars, base savings is 200.
+Meaning:
+- Each extra hour adds 2 points to the score
+- Base score (when hours = 0) is 50
+```
+
+**Example 2 — House Price Prediction:**
+
+```
+prediction = 100000 * room_count + 50000
+
+Meaning:
+- Each room adds $100,000 to the price
+- Base price (with 0 rooms) is $50,000
+```
+
+**Example 3 — Plant Height Growth:**
+
+```
+prediction = 5 * weeks_old + 2
+
+Meaning:
+- Each week the plant grows 5 cm
+- Initial height is 2 cm
+```
+
+**Example 4 — Monthly Savings:**
+
+```
+prediction = 300 * hours_worked_per_week + 200
+
+Meaning:
+- Each work hour saves $300
+- Base savings is $200
+```
 
 ---
 
@@ -82,47 +114,84 @@ Quick comparison:
 
 ---
 
-Very small numeric example
+**Example A — Small, Consistent Errors:**
 
-True values: [3, 5, 7]
-Model guesses: [2, 4, 6]
+```
+True values:     [3, 5, 7]
+Model guesses:   [2, 4, 6]
+Errors:          [1, 1, 1]
 
-Errors: [1, 1, 1]
-MSE = (1^2 + 1^2 + 1^2)/3 = 1
-MAE = (1 + 1 + 1)/3 = 1
+MSE = (1² + 1² + 1²) / 3 = 1
+MAE = (1 + 1 + 1) / 3 = 1
 
-If one guess is a large mistake (100):
-Errors: [1, 1, 93]
-MSE ≈ 2884 (huge because of squaring)
-MAE ≈ 31.7 (big, but not squared)
+→ Both losses are the same (errors are equal)
+```
 
-This shows why MSE can be dominated by a single very wrong prediction.
+**Example B — One Large Mistake:**
 
-More examples for understanding MSE vs MAE:
+```
+True values:     [3, 5, 7]
+Model guesses:   [2, 4, 100]     ← One huge wrong guess!
+Errors:          [1, 1, 93]
 
-Example 2 (House price):
-True prices: [$300k, $400k, $500k]
-Model guesses: [$290k, $410k, $510k]
-Errors: [$10k, $10k, $10k]
-MSE = (10000^2 + 10000^2 + 10000^2) / 3 ≈ 100 million
-MAE = (10000 + 10000 + 10000) / 3 ≈ 10000
+MSE = (1² + 1² + 93²) / 3 ≈ 2,884
+MAE = (1 + 1 + 93) / 3 ≈ 31.7
 
-Example 3 (With one outlier):
-True prices: [$300k, $400k, $500k]
-Model guesses: [$290k, $999k, $510k] ← One huge mistake!
-Errors: [$10k, $599k, $10k]
-MSE = (10000^2 + 599000^2 + 10000^2) / 3 ≈ 119 billion (dominated by the big error)
-MAE = (10000 + 599000 + 10000) / 3 ≈ 206333 (still large, but more reasonable)
+→ MSE is MUCH larger (93² = 8,649 dominates the sum)
+→ This shows why MSE is sensitive to outliers
+```
 
-In Example 3, MSE is much worse at handling that one bad prediction.
+**Example C — House Price (Small Errors):**
+
+```
+True prices:   [$300k, $400k, $500k]
+Guess:         [$290k, $410k, $510k]
+Errors:        [$10k, $10k, $10k]
+
+MSE = (10k² + 10k² + 10k²) / 3 ≈ 100 million
+MAE = (10k + 10k + 10k) / 3 ≈ 10k
+```
+
+**Example D — House Price (One Big Mistake):**
+
+```
+True prices:   [$300k, $400k, $500k]
+Guess:         [$290k, $999k, $510k]  ← One huge mistake!
+Errors:        [$10k, $599k, $10k]
+
+MSE = (10k² + 599k² + 10k²) / 3 ≈ 119 billion  (explodes!)
+MAE = (10k + 599k + 10k) / 3 ≈ 206k            (more balanced)
+
+→ MSE explodes while MAE stays reasonable
+→ This is why MAE is preferred when there are outliers
+```
 
 ---
 
 Why it matters in plain words
 
-- If weight is too large, predictions swing too much for small input changes. For example, if weight = 1000 \* hours, then 1 extra hour changes the score by 1000 points (unrealistic).
-- If weight is too small, predictions barely change and are not useful. For example, if weight = 0.001 \* hours, then 1 hour changes the score by almost 0 (the model ignores the input).
-- Training finds the weight and bias that make predictions match reality as closely as possible.
+**Weight too large:**
+
+```
+prediction = 1000 * hours + 50
+→ 1 extra hour adds 1000 points (unrealistic and unstable)
+```
+
+**Weight too small:**
+
+```
+prediction = 0.001 * hours + 50
+→ 1 extra hour adds only 0.001 points (model barely reacts, not useful)
+```
+
+**Weight just right:**
+
+```
+prediction = 2 * hours + 50
+→ 1 extra hour adds 2 points (realistic and useful)
+```
+
+Training adjusts the weight and bias to find this "just right" balance so predictions match reality as closely as possible.
 
 ---
 
